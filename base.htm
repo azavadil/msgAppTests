@@ -1,0 +1,86 @@
+<!DOCYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset=utf-8> 
+
+</head> 
+
+
+<body> 
+
+<input type="file" id="fileinput"  />
+
+<script type="text/javascript" src="G:\TrieJS\Trie.js"></script>
+<script type="text/javascript" src="G:\TrieJS\randFn.js"></script>
+
+<script type="text/javascript">
+	
+  /** 
+   * Implemenation note: 
+   * -------------------
+   * Basic testing of the TrieST data structure. 
+   * 
+   * First test: The file 'output.txt' is used for the test. 
+   * 'output.txt' has 1219 names. The names are put into the 
+   * TrieST table in order. The program randomly selects an 
+   * index from the range 0-1218. We check that the value 
+   * stored with the key matches the randomly selected index.    
+   * 
+   * Second test: test the keysWithPrefix with a handful of 
+   * prefixes. 
+   */ 
+
+  function readSingleFile(evt) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+	      var contents = e.target.result;
+          var nameList = contents.split("\n").map(function(item,index,array){return item.trim()}); 
+		  console.log("number of array elements: " + nameList.length); 
+		  
+		  
+		  trie = new TrieST(); 
+		  
+		  var count = 0;
+		  for (var i = 0; i < nameList.length; i++){
+		  	trie.put(nameList[i], count++); 
+		  } 
+		  
+		 
+		  for (var j = 0; j < 100; j++){
+			var index = selectFrom(0, nameList.length-1); 
+			var val = trie.get(nameList[index]); 
+			console.log("Index = " + index + ", val = " + val ); 
+		  }
+		  
+
+		  var pre = ['Ant', 'St', 'Ca', 'jo', 'Joe', 'ja', 'Pa']; 
+			
+		  var completions = trie.keysWithPrefix('Ant'); 
+		  console.log("completions: " + completions); 
+		
+			
+		  
+		  for (prefix in pre){
+			console.log("bkpt"); 
+		  	var completions = trie.keysWithPrefix(prefix); 
+		  	for (var j = 0; j < completions.length; j++){ 
+		  		console.log("Pre: " + prefix + ", completion: " + completions[j]);
+			}
+		  }
+		  
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+
+</body> 
+</html> 
